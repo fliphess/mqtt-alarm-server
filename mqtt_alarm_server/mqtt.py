@@ -76,7 +76,6 @@ class AlarmMQTTListener(mqtt.Client):
     def _send_command(self, mqttc, action):
         payload = self.settings.actions.get(action, None)
         if payload:
-            time.sleep(5)
             mqttc.publish(topic=self.settings.command_topic, payload=payload)
 
     def _setup_listener(self):
