@@ -4,31 +4,39 @@ This is the server side component of the [esp8266 mqtt alarm display](https://gi
 It listens on a MQTT topic for authentication requests and adjusts the [home assistant manual mqtt alarm panel](https://www.home-assistant.io/components/alarm_control_panel.manual_mqtt/) accordingly.
 
 If the UID and the passcode match a person in the yaml configuration file and this person is allowed to manage the alarm in the current timeslot,
-An action will be performed, depending on which request was performed on the mqtt alarm display.
+An certain action is triggered, depending on which request was performed on the mqtt alarm display.
 
 
-## Flow
+## Example
 
-1. A token is passed or an alarm code is entered on the display.
-2. The display sends the uuid of the token, the passcode and the requested action as a json to the `rfid_auth_topic` mqtt topic.
-3. The mqtt alarm server checks the uuid and the passcode in it's configuration.
-4. A status message is send to the topic the display is listening on (`display_topic/$HOSTNAME`).
-5. The server sends an mqtt update to the homeassistant alarm command topic to change the alarm state.
-6. Home assistant changes the alarm state and sends an update to the `state_topic`.
-7. The server proxies this alarm state to the `display_topic`.
-8. The display updates the display panel to the current alarm state and waits for new input.
+OK:
+
+```
+    DISPLAY: home/alarm/rfid {"hostname":"alarmdisplay1.home","uid":"12AB34","code":"1234","action":1}
+    SERVER:  home/alarm/display/alarmdisplay1.home {"access": "GRANTED", "name": "Flip", "uid": "12AB34"}
+    SERVER:  home/alarm/set DISARM
+    HASS:    home/alarm disarmed
+    SERVER:  home/alarm/display disarmed
+```
+
+NOK:
+
+```
+    DISPLAY: home/alarm/rfid {"hostname":"alarmdisplay1.home","uid":"12AB35","code":"1234","action":1}
+    SERVER:  home/alarm/display/alarmdisplay1.home {"access": "DENIED", "name": "unknown", "uid": "12AB35"}
+```
 
 
 ## Setup
 
 ### Install
 
-Clone repo, create a virtualenv and install `mqtt_alarm_server` and its requirements
+Clone repo, create a virtualenv and install `mqtt_alarm_server` and its requirements:
 
 ```
-  git clone https://github.com/fliphess/mqtt_alarm_server.git && cd mqtt_alarm_server
-  mkvirtualenv -p "$( which python3 )" -a "$( pwd )" mqtt_alarm_server
-  pip install -r requirements.txt
+    git clone https://github.com/fliphess/mqtt_alarm_server.git && cd mqtt_alarm_server
+    mkvirtualenv -p "$( which python3 )" -a "$( pwd )" mqtt_alarm_server
+    pip install .
 ```
 
 ### Configure
@@ -36,7 +44,7 @@ Clone repo, create a virtualenv and install `mqtt_alarm_server` and its requirem
 Copy the config file and adjust the settings
 
 ```
-  cp settings.yaml.example settings.yaml && vim settings.yaml
+    cp settings.yaml.example settings.yaml && vim settings.yaml
 ```
 
 ## Run
@@ -44,5 +52,5 @@ Copy the config file and adjust the settings
 Run the server:
 
 ```
-./alarm-server.py -c settings.yaml -vvvv
+    mqtt-alarm-server -c settings.yaml -vvvv
 ```
