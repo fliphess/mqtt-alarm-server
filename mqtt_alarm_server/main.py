@@ -5,9 +5,9 @@ import sys
 
 from pid import PidFile, PidFileAlreadyLockedError
 
-from mqtt_listener import get_logger
-from mqtt_listener.config import Settings, ConfigError
-from mqtt_listener.mqtt import AlarmMQTTListener
+from mqtt_alarm_server import get_logger
+from mqtt_alarm_server.config import Settings, ConfigError
+from mqtt_alarm_server.mqtt import AlarmMQTTListener
 
 
 def parse_arguments():
@@ -28,7 +28,7 @@ def main():
     logger = get_logger(verbosity=arguments.verbosity, log_file=arguments.log_file)
 
     try:
-        with PidFile('mqtt_listener', piddir='/var/tmp'):
+        with PidFile('mqtt_alarm_server', piddir='/var/tmp'):
             logger.info("Reading configuration file {}".format(arguments.config))
             settings = Settings(filename=arguments.config)
 

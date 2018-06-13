@@ -6,7 +6,7 @@ import time
 import paho.mqtt.client as mqtt
 
 from json import JSONDecodeError
-from mqtt_listener.state import alarm_state
+from mqtt_alarm_server.state import alarm_state
 
 
 class AlarmMQTTListener(mqtt.Client):
