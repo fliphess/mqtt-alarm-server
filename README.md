@@ -54,3 +54,9 @@ Run the server:
 ```
     mqtt-alarm-server -c settings.yaml -vvvv
 ```
+
+## Concerns
+
+As the passcode and the uuid of the card are send in plaintext from the display to the broker, most of the security concerns lie in that part of the setup. The server uses ssl to connect to the broker which should suffice. 
+
+As soon as there is a convenient, non-crashing ssl library for the esp8266, I will implement this on this side of the chain as well.
